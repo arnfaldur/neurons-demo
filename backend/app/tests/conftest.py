@@ -23,14 +23,14 @@ def test_db():
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-            CREATE TABLE IF NOT EXISTS survivors (
-                id serial primary key,
-                name text not null,
-                gender text,
-                age integer,
-                last_location point
-            )
-            """
+                CREATE TABLE IF NOT EXISTS survivors (
+                    id SERIAL primary key,
+                    name text NOT NULL,
+                    gender text,
+                    age integer,
+                    last_location point
+                )
+                """
             )
 
         yield connection
