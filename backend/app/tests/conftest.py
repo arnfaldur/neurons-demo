@@ -28,7 +28,12 @@ def test_db():
                     name text NOT NULL,
                     gender text,
                     age integer,
-                    last_location point
+                    last_location point,
+                    infected bool DEFAULT false,
+                    water integer DEFAULT 0,
+                    food integer DEFAULT 0,
+                    medication integer DEFAULT 0,
+                    ammunition integer DEFAULT 0
                 )
                 """
             )

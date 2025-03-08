@@ -27,6 +27,11 @@ class Survivor(BaseModel):
     age: int
     gender: str
     last_location: tuple[float, float]
+    infected: bool = False
+    water: int = 0
+    food: int = 0
+    medication: int = 0
+    ammunition: int = 0
 
 
 @app.get("/survivor/{survivor_id}")
