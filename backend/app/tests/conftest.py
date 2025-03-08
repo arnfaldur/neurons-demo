@@ -21,6 +21,7 @@ def test_db():
         register_point_adapter(connection)
 
         with connection.cursor() as cursor:
+            # survivor table
             cursor.execute(
                 """
                 CREATE TABLE IF NOT EXISTS survivors (
