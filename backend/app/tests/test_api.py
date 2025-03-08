@@ -78,3 +78,22 @@ def test_survivor_update(test_client: TestClient):
     for key in survivor:
         assert get_response.json()[key] == survivor[key]
 
+
+def test_survivor_update_location(test_client: TestClient):
+    # This would ideally be found by searching,
+    # but we rely on the mock data and serial primary keys instead
+    survivor_id = 1
+
+    # ensure all sent values match values returned from API
+    get_response = test_client.get(f"/survivor/{survivor_id}")
+
+    for location in [[-10, 10], [42, 42], [3.14, 1.59]]:
+
+        patch_response = test_client.patch(
+            f"/survivor/{survivor_id}/update_location", content=json.dumps(location)
+        )
+        assert patch_response.status_code == status.HTTP_200_OK
+
+        # get survivor and check if location matches updated one
+        get_response = test_client.get(f"/survivor/{survivor_id}")
+        assert get_response.json()["last_location"] == location

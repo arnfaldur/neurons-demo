@@ -61,3 +61,16 @@ async def survivor_update(
             survivor_id,
         ),
     )
+
+
+@app.patch("/survivor/{survivor_id}/update_location")
+async def survivor_update_location(
+    survivor_id: int, location: tuple[float, float], cur: Cursor = Depends(get_db)
+):
+    cur.execute(
+        "UPDATE survivors SET last_location = %s WHERE id = %s",
+        (
+            location,
+            survivor_id,
+        ),
+    )
