@@ -44,3 +44,37 @@ def test_survivor_failed_creation(test_client: TestClient):
         )
         assert post_response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
+
+def test_survivor_update(test_client: TestClient):
+    # This would ideally be found by searching,
+    # but we rely on the mock data and serial primary keys instead
+    survivor_id = 1
+
+    # ensure all sent values match values returned from API
+    get_response = test_client.get(f"/survivor/{survivor_id}")
+
+    survivor = get_response.json()
+
+    survivor["name"] = "Marcus"
+    survivor["age"] = 39
+    survivor["gender"] = "male"
+    survivor["last_location"] = [20, 20]
+    for key in [
+        "name",
+        "age",
+        "gender",
+        "last_location",
+    ]:
+        # just check updated values for non-equality
+        assert get_response.json()[key] != survivor[key]
+
+    patch_response = test_client.patch(
+        f"/survivor/{survivor_id}", content=json.dumps(survivor)
+    )
+    assert patch_response.status_code == status.HTTP_200_OK
+
+    # ensure all sent values match values returned from API
+    get_response = test_client.get(f"/survivor/{survivor_id}")
+    for key in survivor:
+        assert get_response.json()[key] == survivor[key]
+

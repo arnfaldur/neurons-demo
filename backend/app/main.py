@@ -45,3 +45,19 @@ async def survivor_post(survivor: Survivor, cur: Cursor = Depends(get_db)):
     if survivor := cur.fetchone():  # type: ignore
         return survivor
     return None
+
+
+@app.patch("/survivor/{survivor_id}")
+async def survivor_update(
+    survivor_id: int, survivor: Survivor, cur: Cursor = Depends(get_db)
+):
+    cur.execute(
+        "UPDATE survivors SET name = %s, age = %s, gender = %s, last_location = %s WHERE id = %s",
+        (
+            survivor.name,
+            survivor.age,
+            survivor.gender,
+            survivor.last_location,
+            survivor_id,
+        ),
+    )
