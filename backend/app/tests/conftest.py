@@ -32,6 +32,14 @@ def test_db():
                 )
                 """
             )
+            cursor.execute(
+                """
+                INSERT INTO survivors (name, age, gender, last_location) VALUES ('Anna', 25, 'female', '(1,2)');
+                INSERT INTO survivors (name, age, gender, last_location) VALUES ('Brian', 22, 'male', '(1,1)');
+                INSERT INTO survivors (name, age, gender, last_location) VALUES ('Chris', 29, 'male', '(2,2)');
+                INSERT INTO survivors (name, age, gender, last_location) VALUES ('Donna', 33, 'female', '(2,2)');
+                """,
+            )
 
         yield connection
 
