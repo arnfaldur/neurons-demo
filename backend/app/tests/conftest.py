@@ -1,8 +1,16 @@
 import os
 
 import pytest
+from fastapi.testclient import TestClient
 import psycopg
 from psycopg.rows import dict_row
+
+from ..main import app
+
+
+@pytest.fixture
+def test_client():
+    return TestClient(app)
 
 
 @pytest.fixture
