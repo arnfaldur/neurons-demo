@@ -30,11 +30,28 @@ def test_db():
                     gender text,
                     age integer,
                     last_location point,
-                    infected bool DEFAULT false,
                     water integer DEFAULT 0,
                     food integer DEFAULT 0,
                     medication integer DEFAULT 0,
                     ammunition integer DEFAULT 0
+                )
+                """
+            )
+            # infection accusation table
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS survivors_infection_accusations (
+                accuser_id integer NOT NULL,
+                accused_id integer NOT NULL,
+
+                PRIMARY KEY (accuser_id, accused_id),
+
+                CONSTRAINT fk_accused FOREIGN KEY (accused_id) REFERENCES
+                    survivors (id) ON DELETE CASCADE,
+                CONSTRAINT fk_accuser FOREIGN KEY (accuser_id) REFERENCES
+                    survivors (id) ON DELETE CASCADE,
+
+                CONSTRAINT no_self_accuse CHECK (accused_id != accuser_id)
                 )
                 """
             )
@@ -46,10 +63,16 @@ def test_db():
                 INSERT INTO survivors (name, age, gender, last_location) VALUES ('Donna', 33, 'female', '(2,2)');
                 """,
             )
+            cursor.execute(
+                """
+                INSERT INTO survivors_infection_accusations (accuser_id, accused_id) VALUES (3,1);
+                """,
+            )
 
         yield connection
 
         with connection.cursor() as cursor:
+            cursor.execute("DROP TABLE survivors_infection_accusations")
             cursor.execute("DROP TABLE survivors")
 
 
