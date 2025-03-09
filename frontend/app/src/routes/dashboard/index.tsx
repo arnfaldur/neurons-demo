@@ -19,9 +19,7 @@ function Dashboard() {
 			return await response.json();
 		},
 	});
-	useEffect(() => {
-		console.log({ survivors });
-	}, [survivors]);
+
 	return (
 		<Box>
 			<Typography variant="h4" component="h1" gutterBottom>
