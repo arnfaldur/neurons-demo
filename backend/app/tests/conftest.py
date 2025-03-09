@@ -6,7 +6,13 @@ import psycopg
 from psycopg.rows import dict_row
 
 from ..main import app
-from ..database import get_db, register_point_adapter
+from ..database import (
+    get_db,
+    register_point_adapter,
+    survivors_table_sql,
+    survivors_infection_accusations_table_sql,
+    example_survivors_sql,
+)
 
 
 @pytest.fixture
@@ -22,51 +28,10 @@ def test_db():
 
         with connection.cursor() as cursor:
             # survivor table
-            cursor.execute(
-                """
-                CREATE TABLE IF NOT EXISTS survivors (
-                    id SERIAL primary key,
-                    name text NOT NULL,
-                    gender text,
-                    age integer,
-                    last_location point,
-                    water integer DEFAULT 0,
-                    food integer DEFAULT 0,
-                    medication integer DEFAULT 0,
-                    ammunition integer DEFAULT 0
-                )
-                """
-            )
+            cursor.execute(survivors_table_sql)
             # infection accusation table
-            cursor.execute(
-                """
-                CREATE TABLE IF NOT EXISTS survivors_infection_accusations (
-                accuser_id integer NOT NULL,
-                accused_id integer NOT NULL,
-
-                PRIMARY KEY (accuser_id, accused_id),
-
-                CONSTRAINT fk_accused FOREIGN KEY (accused_id) REFERENCES
-                    survivors (id) ON DELETE CASCADE,
-                CONSTRAINT fk_accuser FOREIGN KEY (accuser_id) REFERENCES
-                    survivors (id) ON DELETE CASCADE,
-
-                CONSTRAINT no_self_accuse CHECK (accused_id != accuser_id)
-                )
-                """
-            )
-            cursor.execute(
-                """
-                INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
-                    VALUES ('Anna', 25, 'female', '(1,2)', 3, 3, 3, 3);
-                INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
-                    VALUES ('Brian', 22, 'male', '(1,1)', 3, 3, 3, 3);
-                INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
-                    VALUES ('Chris', 29, 'male', '(2,2)', 3, 3, 3, 3);
-                INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
-                    VALUES ('Donna', 33, 'female', '(2,2)', 3, 3, 3, 3);
-                """,
-            )
+            cursor.execute(survivors_infection_accusations_table_sql)
+            cursor.execute(example_survivors_sql)
             cursor.execute(
                 """
                 INSERT INTO survivors_infection_accusations (accuser_id, accused_id) VALUES (3,1);

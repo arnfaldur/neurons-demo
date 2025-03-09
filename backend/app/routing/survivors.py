@@ -4,14 +4,10 @@ from pydantic import BaseModel
 
 from ..database import get_db
 
-from . import infection, items
 from .items import Inventory
 
 
 router = APIRouter(tags=["survivors"])
-
-router.include_router(infection.router, prefix="")
-router.include_router(items.router, prefix="")
 
 
 class Survivor(BaseModel):
