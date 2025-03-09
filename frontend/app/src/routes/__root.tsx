@@ -1,5 +1,6 @@
 import { Link, Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -8,27 +9,25 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <>
-      <div className="p-2 flex gap-2 text-lg">
-        <Link
-          to="/"
-          activeProps={{
-            className: 'font-bold',
-          }}
-          activeOptions={{ exact: true }}
-        >
-          Home
-        </Link>{' '}
-        <Link
-          to="/about"
-          activeProps={{
-            className: 'font-bold',
-          }}
-        >
-          About
-        </Link>
-      </div>
-      <hr />
-      <Outlet />
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Neurons Demo
+          </Typography>
+          <Button
+            color="inherit" 
+            component={Link}
+            to="/dashboard"
+          >
+            Dashboard
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <Container>
+        <Box sx={{ mt: 4 }}>
+          <Outlet />
+        </Box>
+      </Container>
       <TanStackRouterDevtools position="bottom-right" />
     </>
   )
