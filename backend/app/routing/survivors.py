@@ -4,45 +4,65 @@ from pydantic import BaseModel
 
 from ..database import get_db
 
-from . import infection
+from . import infection, items
+from .items import Inventory
 
 
 router = APIRouter(tags=["survivors"])
 
 router.include_router(infection.router, prefix="")
+router.include_router(items.router, prefix="")
 
 
 class Survivor(BaseModel):
+    id: int = 0
     name: str
     age: int
     gender: str
     last_location: tuple[float, float]
-    infected: bool = False
-    water: int = 0
-    food: int = 0
-    medication: int = 0
-    ammunition: int = 0
+    inventory: Inventory | None = None
+
+    @classmethod
+    def from_dict(cls, data) -> "Survivor":
+        inventory = Inventory(**{k: data[k] for k in Inventory.model_fields})
+        return cls(
+            **{k: data[k] for k in cls.model_fields if k != "inventory"},
+            inventory=inventory,
+        )
 
 
-@router.get("")
+@router.get("", response_model=list[Survivor])
 async def get_survivors(cur: Cursor = Depends(get_db)):
     cur.execute("SELECT * from survivors")
-    return cur.fetchall()
+    return list(map(Survivor.from_dict, cur.fetchall()))
 
 
 @router.get("/{survivor_id}")
 async def get_survivor(survivor_id: int, cur: Cursor = Depends(get_db)):
     cur.execute("SELECT * from survivors WHERE id = %s", (survivor_id,))
     survivor = cur.fetchone()
-    return survivor
+    return Survivor.from_dict(survivor)
 
 
 @router.post("")
 async def create_survivor(survivor: Survivor, cur: Cursor = Depends(get_db)):
-    cur.execute(
-        "INSERT INTO survivors (name, age, gender, last_location) VALUES (%s, %s, %s, %s) RETURNING id",
-        (survivor.name, survivor.age, survivor.gender, survivor.last_location),
-    )
+    if survivor.inventory is None:
+        cur.execute(
+            "INSERT INTO survivors (name, age, gender, last_location) VALUES (%s, %s, %s, %s) RETURNING id",
+            (survivor.name, survivor.age, survivor.gender, survivor.last_location),
+        )
+    else:
+        cur.execute(
+            """INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+            (
+                survivor.name,
+                survivor.age,
+                survivor.gender,
+                survivor.last_location,
+                *dict(survivor.inventory).values(),
+            ),
+        )
     if survivor := cur.fetchone():  # type: ignore
         return survivor
     return None

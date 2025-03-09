@@ -3,10 +3,9 @@ from starlette.testclient import TestClient
 
 
 def test_survivor_infection(test_client: TestClient):
-    # This would ideally be found by searching,
-    # but we rely on the mock data and serial primary keys instead
     get_response = test_client.get("/survivors")
     survivor_ids = list(map(lambda s: s["id"], get_response.json()))
+
 
     get_response = test_client.get(f"/survivors/{survivor_ids[1]}/infection")
     # zero accusations mean not infected

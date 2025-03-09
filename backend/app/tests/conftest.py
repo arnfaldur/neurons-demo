@@ -57,10 +57,14 @@ def test_db():
             )
             cursor.execute(
                 """
-                INSERT INTO survivors (name, age, gender, last_location) VALUES ('Anna', 25, 'female', '(1,2)');
-                INSERT INTO survivors (name, age, gender, last_location) VALUES ('Brian', 22, 'male', '(1,1)');
-                INSERT INTO survivors (name, age, gender, last_location) VALUES ('Chris', 29, 'male', '(2,2)');
-                INSERT INTO survivors (name, age, gender, last_location) VALUES ('Donna', 33, 'female', '(2,2)');
+                INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
+                    VALUES ('Anna', 25, 'female', '(1,2)', 3, 3, 3, 3);
+                INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
+                    VALUES ('Brian', 22, 'male', '(1,1)', 3, 3, 3, 3);
+                INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
+                    VALUES ('Chris', 29, 'male', '(2,2)', 3, 3, 3, 3);
+                INSERT INTO survivors (name, age, gender, last_location, water, food, medication, ammunition)
+                    VALUES ('Donna', 33, 'female', '(2,2)', 3, 3, 3, 3);
                 """,
             )
             cursor.execute(
