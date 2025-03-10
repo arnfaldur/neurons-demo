@@ -1,13 +1,23 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routing import survivors, infection, items
 from .database import initialize_db
 
+
+# Initialize database on startup
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    initialize_db()
+    yield
+
+
 app = FastAPI(
     title="ZSSN API",
     description="An API for the Zombie Survival Social Network",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 # Add CORS middleware
@@ -23,11 +33,6 @@ app.add_middleware(
 app.include_router(survivors.router, prefix="/survivors")
 app.include_router(infection.router, prefix="/survivors")
 app.include_router(items.router, prefix="/survivors")
-
-# Initialize database on startup
-@app.on_event("startup")
-async def startup_db_client():
-    initialize_db()
 
 
 @app.get("/")
