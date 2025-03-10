@@ -6,6 +6,7 @@ from ..database import get_db
 
 router = APIRouter(tags=["infection"])
 
+
 class Accuser(BaseModel):
     accuser_id: int
 
@@ -20,6 +21,17 @@ async def is_survivor_infected(survivor_id: int, cur: Cursor = Depends(get_db)):
     if accusation := accusations.fetchone():
         return {"infected": accusation["count"] >= 3}
     return {"infected": False}
+
+
+# This is a GET request that returns a list of ids of survivors
+# that have accused this survivor of being infected
+@router.get("/{survivor_id}/infection/accusers")
+async def is_survivor_accused(survivor_id: int, cur: Cursor = Depends(get_db)):
+    accusations = cur.execute(
+        "SELECT accuser_id FROM survivors_infection_accusations WHERE accused_id = %s",
+        (survivor_id,),
+    )
+    return list(map(lambda a: a["accuser_id"], accusations.fetchall()))
 
 
 # This is a POST request that registers an accusation of an infection

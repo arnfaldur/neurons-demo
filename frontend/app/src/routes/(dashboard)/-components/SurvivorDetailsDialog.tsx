@@ -1,9 +1,11 @@
+import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
 	Dialog,
 	DialogTitle,
 	DialogContent,
 	DialogActions,
-	Grid2 as Grid2,
+	Grid2,
 	Typography,
 	Divider,
 	Box,
@@ -16,8 +18,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "../../../utils";
 import { Survivor } from "../-types";
-import { Link } from "@tanstack/react-router";
+import { SurvivorPickerDialog } from "./SurvivorPickerDialog";
 
+// This component shows details about a survivor
 export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 	const queryClient = useQueryClient();
 	const {
@@ -33,6 +36,18 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 			return await response.json();
 		},
 	});
+	const { data: accusations, status: accusationsStatus } = useQuery({
+		queryKey: ["survivor", survivorId, "infection", "accusers"],
+		queryFn: async () => {
+			const response = await fetch(
+				`${API_BASE_URL}/survivors/${survivorId}/infection/accusers`,
+			);
+			// make set out of existing accusations, and add self to avoid accusing oneself.
+			return new Set([...(await response.json()), Number(survivorId)]);
+		},
+	});
+	const [survivorPicker, setSurvivorPicker] = useState(false);
+
 	const deleteSurvivor = async (survivorId: number) => {
 		await fetch(`${API_BASE_URL}/survivors/${survivorId}`, {
 			method: "DELETE",
@@ -55,21 +70,37 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 				)}
 			</DialogContent>
 			<DialogActions>
-				<Link to="/dashboard">
+				<Grid2 container spacing={2}>
 					<Button
-						onClick={() => deleteSurvivor(survivorId)}
+						onClick={() => setSurvivorPicker(true)}
 						variant="contained"
-						color="error"
+						color="secondary"
 					>
-						Delete
+						Accuse
 					</Button>
-				</Link>
-				<Link to="/dashboard">
-					<Button variant="contained" color="primary">
-						Close
-					</Button>
-				</Link>
+					<Link to="/dashboard">
+						<Button
+							onClick={() => deleteSurvivor(survivorId)}
+							variant="contained"
+							color="error"
+						>
+							Delete
+						</Button>
+					</Link>
+					<Link to="/dashboard">
+						<Button variant="contained" color="primary">
+							Close
+						</Button>
+					</Link>
+				</Grid2>
 			</DialogActions>
+			{accusationsStatus === "success" && (
+				<SurvivorPickerDialog
+					accusations={accusations}
+					open={survivorPicker}
+					setSurvivorPicker={setSurvivorPicker}
+				/>
+			)}
 		</Dialog>
 	);
 }
