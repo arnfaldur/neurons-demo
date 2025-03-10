@@ -9,10 +9,9 @@ def initialize_db():
     """Initialize database schema
     This should be called only once at application startup.
     """
-    conn_string = os.getenv(
-        "DATABASE_URL",
-        "postgresql://postgres:postgres@localhost:5432/neurons",
-    )
+    conn_string = os.getenv("DATABASE_URL")
+    if conn_string is None:
+        raise Exception("couldn't read DATABASE_URL environment variable")
     with psycopg.connect(conn_string, autocommit=True) as connection:
         register_point_adapter(connection)
         with connection.cursor() as cursor:
@@ -22,13 +21,12 @@ def initialize_db():
 
 
 def get_db():
-    """Get a database connection. 
+    """Get a database connection.
     This is used as a FastAPI dependency for route handlers.
     """
-    conn_string = os.getenv(
-        "DATABASE_URL",
-        "postgresql://postgres:postgres@localhost:5432/neurons",
-    )
+    conn_string = os.getenv("DATABASE_URL")
+    if conn_string is None:
+        raise Exception("couldn't read DATABASE_URL environment variable")
     with psycopg.connect(
         conn_string, autocommit=True, row_factory=dict_row
     ) as connection:

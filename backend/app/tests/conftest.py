@@ -17,10 +17,9 @@ from ..database import (
 
 @pytest.fixture
 def test_db():
-    conn_string = os.getenv(
-        "TEST_DATABASE_URL",
-        "postgresql://postgres:postgres@localhost:5434/neurons_testing",
-    )
+    conn_string = os.getenv("TEST_DATABASE_URL")
+    if conn_string is None:
+        raise Exception("couldn't read TEST_DATABASE_URL environment variable")
     with psycopg.connect(
         conn_string, autocommit=True, row_factory=dict_row
     ) as connection:
