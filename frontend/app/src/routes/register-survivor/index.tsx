@@ -13,7 +13,7 @@ import {
 import { PersonalInfoSection } from "./-components/PersonalInfoSection";
 import { LocationSection } from "./-components/LocationSection";
 import { InventorySection } from "./-components/InventorySection";
-import { API_BASE_URL } from "../../utils";
+import { API_BASE_URL, easyPost } from "../../utils";
 import { useRouter } from "@tanstack/react-router";
 import { NotificationContext, NotificationState } from "../-Notifications";
 
@@ -52,29 +52,12 @@ async function submit(
 		inventory,
 	};
 
-	try {
-		const response = await fetch(`${API_BASE_URL}/survivors`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(survivor),
-		});
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.detail || "Failed to register survivor");
-		}
-		return {
-			success: "Survivor registered successfully!",
-		};
-	} catch (error) {
-		return {
-			error:
-				error instanceof Error
-					? error.message
-					: "Unknown error occurred",
-		};
-	}
+	return await easyPost(
+		`${API_BASE_URL}/survivors`,
+		JSON.stringify(survivor),
+		"Failed to register survivor",
+		"Survivor registered successfully!",
+	);
 }
 
 function RegisterSurvivor() {
