@@ -16,6 +16,7 @@ import type { Survivor } from "../../../../types";
 import { SurvivorPickerDialog } from "./SurvivorPickerDialog";
 import { Inventory } from "./Inventory";
 import { Location } from "./Location";
+import { InventoryBig } from "../../../../components/inventory";
 
 // This component shows details about a survivor
 export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
@@ -62,7 +63,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 					<Grid2 container spacing={2}>
 						<Bio survivor={survivor} />
 						<Location survivor={survivor} />
-						<Inventory survivor={survivor} />
+						<InventoryBig survivor={survivor} />
 					</Grid2>
 				)}
 			</DialogContent>
