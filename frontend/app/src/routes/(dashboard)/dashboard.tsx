@@ -3,8 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
 import { SurvivorsTable } from "./-components/SurvivorsTable";
-
-const API_BASE_URL = "http://localhost:8000";
+import { API_BASE_URL } from "../../utils";
 
 export const Route = createFileRoute("/(dashboard)/dashboard")({
 	component: Dashboard,
