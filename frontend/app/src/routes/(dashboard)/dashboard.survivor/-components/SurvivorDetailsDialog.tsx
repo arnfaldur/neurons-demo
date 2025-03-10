@@ -18,7 +18,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "../../../../utils";
-import { Survivor } from "../../-types";
+import type { Survivor } from "../../../../types";
 import { SurvivorPickerDialog } from "./SurvivorPickerDialog";
 import { LocationSection } from "../../../register-survivor/-components/LocationSection";
 import {

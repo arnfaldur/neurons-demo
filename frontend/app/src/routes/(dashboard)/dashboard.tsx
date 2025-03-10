@@ -10,11 +10,12 @@ export const Route = createFileRoute("/(dashboard)/dashboard")({
 });
 
 function Dashboard() {
-	const survivors = useQuery({
+	const { data: survivors } = useQuery({
 		queryKey: ["survivors"],
 		queryFn: async () => {
 			const response = await fetch(`${API_BASE_URL}/survivors`);
-			return await response.json();
+			const survivorList = await response.json();
+			return Object.fromEntries(survivorList.map((s) => [s.id, s]));
 		},
 	});
 
@@ -26,7 +27,9 @@ function Dashboard() {
 				</Typography>
 
 				{/* Survivors Table */}
-				<SurvivorsTable survivors={survivors?.data ?? []} />
+				<SurvivorsTable
+					survivors={(survivors && Object.values(survivors)) ?? []}
+				/>
 			</Box>
 			<Outlet />
 		</>

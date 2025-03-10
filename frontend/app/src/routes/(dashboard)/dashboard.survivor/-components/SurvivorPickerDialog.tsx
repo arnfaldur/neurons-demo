@@ -13,20 +13,21 @@ import {
 	TableRow,
 } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 
 import { API_BASE_URL } from "../../../../utils";
-import { Survivor } from "../../-types";
-import { useParams } from "@tanstack/react-router";
+import type { Survivor } from "../../../../types";
 
 // This component lets you pick a survivor to accuse another of being infected.
 export function SurvivorPickerDialog({ open, accusations, setSurvivorPicker }) {
 	const { survivorId } = useParams({ strict: false });
 	const queryClient = useQueryClient();
-	const survivors = useQuery({
+	const { data: survivors } = useQuery({
 		queryKey: ["survivors"],
 		queryFn: async () => {
 			const response = await fetch(`${API_BASE_URL}/survivors`);
-			return await response.json();
+			const survivorList = await response.json();
+			return Object.fromEntries(survivorList.map((s) => [s.id, s]));
 		},
 	});
 
@@ -52,9 +53,10 @@ export function SurvivorPickerDialog({ open, accusations, setSurvivorPicker }) {
 	};
 
 	// Filter out survivors that can't make an accusation
-	const potentialAccusers = (survivors?.data ?? []).filter(
-		(s) => !accusations.has(s.id),
-	);
+	const potentialAccusers = (
+		(survivors && Object.values(survivors)) ??
+		[]
+	).filter((s) => !accusations.has(s.id));
 	return (
 		<Dialog open={open}>
 			<DialogTitle>Choose the accusing survivor</DialogTitle>
