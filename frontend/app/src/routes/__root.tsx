@@ -1,5 +1,4 @@
 import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import {
 	AppBar,
 	Toolbar,
@@ -78,7 +77,6 @@ function RootComponent() {
 					</NotificationProvider>
 				</Box>
 			</Container>
-			<TanStackRouterDevtools position="bottom-right" />
 		</>
 	);
 }

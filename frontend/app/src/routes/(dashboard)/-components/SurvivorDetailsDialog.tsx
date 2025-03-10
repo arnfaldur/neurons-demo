@@ -28,8 +28,6 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 	
 	const {
 		data: survivor,
-		isFetching,
-		isFetched,
 		error: survivorError,
 		status: survivorStatus,
 		refetch: refetchSurvivor
