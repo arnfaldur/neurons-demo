@@ -199,6 +199,14 @@ function TradingRoute() {
 					<DialogActions>
 						<Button
 							variant="contained"
+							color="primary"
+							disabled={!isTradeBalanced}
+							onClick={performTrade}
+						>
+							Complete Trade
+						</Button>
+						<Button
+							variant="contained"
 							color="warning"
 							onClick={() => {
 								setSelectedA(null);
@@ -206,14 +214,6 @@ function TradingRoute() {
 							}}
 						>
 							Cancel
-						</Button>
-						<Button
-							variant="contained"
-							color="primary"
-							disabled={!isTradeBalanced}
-							onClick={performTrade}
-						>
-							Complete Trade
 						</Button>
 					</DialogActions>
 				</Dialog>

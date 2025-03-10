@@ -14,7 +14,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL } from "../../../../utils";
 import type { Survivor } from "../../../../types";
 import { SurvivorPickerDialog } from "./SurvivorPickerDialog";
-import { Inventory } from "./Inventory";
 import { Location } from "./Location";
 import { InventoryBig } from "../../../../components/inventory";
 

@@ -7,6 +7,8 @@ import {
 	Stack,
 	Paper,
 	Divider,
+	useMediaQuery,
+	useTheme,
 } from "@mui/material";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
@@ -56,6 +58,8 @@ export function TradingInventory({
 	survivor,
 	onTradeChange,
 }: TradeInventorySectionProps) {
+	const theme = useTheme();
+	const isSmallScreen = useMediaQuery(theme.breakpoints.only("xs"));
 	// Initialize trade amounts
 	const [tradeAmounts, setTradeAmounts] = useState<
 		Record<ResourceKey, number>
@@ -137,7 +141,7 @@ export function TradingInventory({
 								>
 									{resource.icon}
 								</Box>
-								<Typography variant="body1">
+								<Typography variant={{ xs: "", sm: "body1" }}>
 									{resource.label}
 								</Typography>
 							</Box>
@@ -149,11 +153,13 @@ export function TradingInventory({
 								sx={{ justifyContent: "flex-end" }}
 							>
 								{/* Available amount */}
-								<Chip
-									size="small"
-									label={`Available: ${maxAmount}`}
-									sx={{ bgcolor: resource.color }}
-								/>
+								{!isSmallScreen && (
+									<Chip
+										size="small"
+										label={`Available: ${maxAmount}`}
+										sx={{ bgcolor: resource.color }}
+									/>
+								)}
 
 								{/* Trading amount */}
 								<Chip
