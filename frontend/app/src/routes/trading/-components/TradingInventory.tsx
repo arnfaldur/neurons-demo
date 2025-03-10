@@ -14,6 +14,7 @@ import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import { blue, green, red, amber } from "@mui/material/colors";
 import type { Survivor } from "../../../types";
+import { inventoryPointValue } from "../-utils";
 
 // Resource types with associated metadata
 const resources = {
@@ -51,7 +52,7 @@ interface TradeInventorySectionProps {
 	onTradeChange?: (resourceType: ResourceKey, value: number) => void;
 }
 
-export function TradeInventorySection({
+export function TradingInventory({
 	survivor,
 	onTradeChange,
 }: TradeInventorySectionProps) {
@@ -79,11 +80,32 @@ export function TradeInventorySection({
 		}
 	};
 
+	// Calculate total items being traded
+	const pointsOffered = inventoryPointValue(tradeAmounts);
+
 	return (
 		<Paper elevation={2} sx={{ py: 2, px: 3, width: "100%" }}>
-			<Typography variant="h6" sx={{ mb: 2 }}>
-				{survivor.name}'s Inventory
-			</Typography>
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "space-between",
+					mb: 2,
+				}}
+			>
+				<Typography variant="h6">
+					{survivor.name}'s Inventory
+				</Typography>
+
+				{pointsOffered > 0 && (
+					<Chip
+						size="small"
+						color="secondary"
+						label={`Points offered: ${pointsOffered}`}
+						sx={{ fontWeight: "medium" }}
+					/>
+				)}
+			</Box>
 
 			<Divider sx={{ mb: 2 }} />
 
@@ -136,7 +158,7 @@ export function TradeInventorySection({
 								{/* Trading amount */}
 								<Chip
 									size="small"
-									label={`Trading: ${currentAmount}`}
+									label={`Offering: ${currentAmount}`}
 									color={
 										currentAmount > 0
 											? "primary"
@@ -172,13 +194,6 @@ export function TradeInventorySection({
 							]}
 							sx={{
 								color: resource.sliderColor,
-								"& .MuiSlider-thumb": {
-									height: 24,
-									width: 24,
-								},
-								"& .MuiSlider-valueLabel": {
-									backgroundColor: resource.sliderColor,
-								},
 							}}
 							valueLabelDisplay="auto"
 						/>

@@ -89,8 +89,8 @@ export function TradersTable({
 }: {
 	survivors: Survivor[];
 	select: (s: number | null) => void;
-	selected: number;
-	forbidden: number;
+	selected: number | null;
+	forbidden: number | null;
 }) {
 	return (
 		<>

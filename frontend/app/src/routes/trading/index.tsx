@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { API_BASE_URL } from "../../utils";
+import { API_BASE_URL, easyPost } from "../../utils";
 import { TradersTable } from "./-components/TradersTable";
-import { TradeInventorySection } from "./-components/TradingInventory";
+import { TradingInventory } from "./-components/TradingInventory";
 import {
 	Button,
 	Dialog,
@@ -13,17 +13,27 @@ import {
 	Grid2,
 	Typography,
 	Box,
-	Divider,
 	Stack,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+import { inventoryPointValue } from "./-utils";
+import { green } from "@mui/material/colors";
+import { NotificationContext } from "../-Notifications";
 
 export const Route = createFileRoute("/trading/")({
-	component: RouteComponent,
+	component: TradingRoute,
 });
 
-function RouteComponent() {
+const emptyInventory = {
+	water: 0,
+	food: 0,
+	medication: 0,
+	ammunition: 0,
+};
+
+function TradingRoute() {
+	const queryClient = useQueryClient();
 	const { data: survivors, status: survivorsStatus } = useQuery({
 		queryKey: ["survivors"],
 		queryFn: async () => {
@@ -32,12 +42,11 @@ function RouteComponent() {
 			return Object.fromEntries(survivorList.map((s) => [s.id, s]));
 		},
 	});
+	const setNotification = useContext(NotificationContext);
 	const [selectedA, setSelectedA] = useState<number | null>(null);
 	const [selectedB, setSelectedB] = useState<number | null>(null);
-	const [tradeBalance, setTradeBalance] = useState({
-		a: { water: 0, food: 0, medication: 0, ammunition: 0 },
-		b: { water: 0, food: 0, medication: 0, ammunition: 0 },
-	});
+	const [tradeBalanceA, setTradeBalanceA] = useState(emptyInventory);
+	const [tradeBalanceB, setTradeBalanceB] = useState(emptyInventory);
 
 	const survivorA = useMemo(
 		() => selectedA && survivors?.[selectedA],
@@ -50,26 +59,53 @@ function RouteComponent() {
 
 	// Handle trade changes
 	const handleTradeChangeA = (resourceType, value) => {
-		setTradeBalance((prev) => ({
+		setTradeBalanceA((prev) => ({
 			...prev,
-			a: { ...prev.a, [resourceType]: value },
+			[resourceType]: value,
 		}));
 	};
 
 	const handleTradeChangeB = (resourceType, value) => {
-		setTradeBalance((prev) => ({
+		setTradeBalanceB((prev) => ({
 			...prev,
-			b: { ...prev.b, [resourceType]: value },
+			[resourceType]: value,
 		}));
 	};
 
 	// Calculate if trade is balanced/fair
 	const isTradeBalanced = useMemo(() => {
-		// This is a placeholder - in a real app you'd implement actual trade balance logic
-		return true;
-	}, [tradeBalance]);
+		return (
+			inventoryPointValue(tradeBalanceA) > 0 &&
+			inventoryPointValue(tradeBalanceA) ===
+				inventoryPointValue(tradeBalanceB)
+		);
+	}, [tradeBalanceA, tradeBalanceB]);
 
 	if (survivorsStatus !== "success") return null;
+
+	const performTrade = async () => {
+		const offer = {
+			trader_id: selectedB,
+			offered: tradeBalanceB,
+			requested: tradeBalanceA,
+		};
+		const result = await easyPost(
+			`${API_BASE_URL}/survivors/${selectedA}/trade`,
+			JSON.stringify(offer),
+			"Failed to complete trade",
+			"Trade completed successfully!",
+		);
+		setNotification(result);
+		queryClient.invalidateQueries({
+			queryKey: ["survivors"],
+		});
+		queryClient.invalidateQueries({
+			queryKey: ["survivors", selectedA],
+		});
+		queryClient.invalidateQueries({
+			queryKey: ["survivors", selectedB],
+		});
+	};
 
 	return (
 		<>
@@ -120,23 +156,40 @@ function RouteComponent() {
 										alignItems: "center",
 										justifyContent: "center",
 										py: 1,
+										minWidth: "48px",
 									}}
 								>
 									<CompareArrowsIcon
 										fontSize="large"
-										color="action"
+										color={
+											isTradeBalanced
+												? "success"
+												: "action"
+										}
+										sx={
+											isTradeBalanced
+												? {
+														fontSize: "48px",
+														background: green[100],
+														borderRadius: "25%",
+														borderSpacing: "8px",
+												  }
+												: {
+														fontSize: "32px",
+												  }
+										}
 									/>
 								</Box>
 							}
 						>
 							<Box sx={{ flex: 1, width: "100%" }}>
-								<TradeInventorySection
+								<TradingInventory
 									survivor={survivorA}
 									onTradeChange={handleTradeChangeA}
 								/>
 							</Box>
 							<Box sx={{ flex: 1, width: "100%" }}>
-								<TradeInventorySection
+								<TradingInventory
 									survivor={survivorB}
 									onTradeChange={handleTradeChangeB}
 								/>
@@ -158,6 +211,7 @@ function RouteComponent() {
 							variant="contained"
 							color="primary"
 							disabled={!isTradeBalanced}
+							onClick={performTrade}
 						>
 							Complete Trade
 						</Button>
