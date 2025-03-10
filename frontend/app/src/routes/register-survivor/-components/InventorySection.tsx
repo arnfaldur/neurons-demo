@@ -4,7 +4,7 @@ import { Grid2, TextField, Typography } from "@mui/material";
 type InventoryItem = "water" | "food" | "medication" | "ammunition";
 
 function InventoryItemField({ item }: { item: InventoryItem }) {
-	const [value, setValue] = useState(initialValue);
+	const [value, setValue] = useState(0);
 
 	// Format the label (capitalize first letter)
 	const label = item.charAt(0).toUpperCase() + item.slice(1);

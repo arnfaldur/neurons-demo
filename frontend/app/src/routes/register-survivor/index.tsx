@@ -15,23 +15,42 @@ import { InventorySection } from "./-components/InventorySection";
 import { Notifications } from "./-components/Notifications";
 import { API_BASE_URL } from "../../utils";
 import { useRouter } from "@tanstack/react-router";
-import {
-	NotificationContext,
-	NotificationState,
-} from "../-Notifications";
+import { NotificationContext, NotificationState } from "../-Notifications";
 
 export const Route = createFileRoute("/register-survivor/")({
 	component: RegisterSurvivor,
 });
 
+type InventoryItem = "water" | "food" | "medication" | "ammunition";
+const inventoryItems: InventoryItem[] = [
+	"water",
+	"food",
+	"medication",
+	"ammunition",
+];
+
 async function submit(
 	_: ActionState,
 	formData: FormData,
 ): Promise<NotificationState> {
+	// create last_location object from formData
 	const last_location = [formData.get("latitude"), formData.get("longitude")];
+	// and remove the coordinates from the formData
 	formData.delete("latitude");
 	formData.delete("longitude");
-	const inter = { ...Object.fromEntries(formData), last_location };
+
+	// create inventory object from formData
+	const inventory = Object.fromEntries(
+		inventoryItems.map((i) => [i, formData.get(`inventory.${i}`)]),
+	);
+	// and remove the items from the formData
+	inventoryItems.forEach((i) => formData.delete(`inventory.${i}`));
+
+	const survivor = {
+		...Object.fromEntries(formData),
+		last_location,
+		inventory,
+	};
 
 	try {
 		const response = await fetch(`${API_BASE_URL}/survivors`, {
@@ -39,19 +58,17 @@ async function submit(
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(inter),
+			body: JSON.stringify(survivor),
 		});
 		if (!response.ok) {
 			const errorData = await response.json();
 			throw new Error(errorData.detail || "Failed to register survivor");
 		}
 		return {
-			success: true,
-			error: null,
+			success: "Survivor registered successfully!",
 		};
 	} catch (error) {
 		return {
-			success: false,
 			error:
 				error instanceof Error
 					? error.message

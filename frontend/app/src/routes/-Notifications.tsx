@@ -54,7 +54,7 @@ function Notifications({ state }: { state: NotificationState }) {
 				onClose={onSuccessClose}
 			>
 				<Alert onClose={onSuccessClose} severity="success">
-					Survivor registered successfully!
+                    {success}
 				</Alert>
 			</Snackbar>
 
