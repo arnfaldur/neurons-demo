@@ -45,14 +45,17 @@ export function TradersTable({
 							.map((survivor) => (
 								<TableRow
 									key={survivor.id}
-									hover
-									sx={
-										selected === survivor.id
+									hover={selected !== survivor.id}
+									sx={{
+										...(selected === survivor.id
 											? {
-													background: lightGreen[400],
+													backgroundColor:
+														lightGreen[400],
 											  }
-											: {}
-									}
+											: {
+													cursor: "pointer",
+											  }),
+									}}
 									onClick={() => select(survivor.id)}
 								>
 									<TableCell>{survivor.id}</TableCell>

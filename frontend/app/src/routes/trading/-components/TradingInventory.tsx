@@ -98,7 +98,7 @@ export function TradingInventory({
 				}}
 			>
 				<Typography variant="h6">
-					{survivor.name}'s Inventory
+					{survivor.name}&apos;s Inventory
 				</Typography>
 
 				{pointsOffered > 0 && (
@@ -141,7 +141,7 @@ export function TradingInventory({
 								>
 									{resource.icon}
 								</Box>
-								<Typography variant={{ xs: "", sm: "body1" }}>
+								<Typography variant="body1">
 									{resource.label}
 								</Typography>
 							</Box>

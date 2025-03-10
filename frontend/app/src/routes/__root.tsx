@@ -6,6 +6,7 @@ import {
 	Typography,
 	Button,
 	Container,
+	Grid2,
 	Box,
 	useMediaQuery,
 	IconButton,
@@ -41,8 +42,9 @@ function RootComponent() {
 							setAnchorEl={setAnchorEl}
 						/>
 					) : (
-						<>
+						<Grid2 container spacing={2}>
 							<Button
+								variant="outlined"
 								color="inherit"
 								component={Link}
 								to="/survivors"
@@ -50,6 +52,7 @@ function RootComponent() {
 								Survivors
 							</Button>
 							<Button
+								variant="outlined"
 								color="inherit"
 								component={Link}
 								to="/trading"
@@ -57,13 +60,14 @@ function RootComponent() {
 								Trading
 							</Button>
 							<Button
+								variant="outlined"
 								color="inherit"
 								component={Link}
 								to="/register-survivor"
 							>
 								Register Survivor
 							</Button>
-						</>
+						</Grid2>
 					)}
 				</Toolbar>
 			</AppBar>
