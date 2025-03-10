@@ -15,8 +15,10 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 
-import { API_BASE_URL } from "../../../../utils";
+import { API_BASE_URL, easyPost } from "../../../../utils";
 import type { Survivor } from "../../../../types";
+import { useContext } from "react";
+import { NotificationContext } from "../../../-Notifications";
 
 // This component lets you pick a survivor to accuse another of being infected.
 export function SurvivorPickerDialog({ open, accusations, setSurvivorPicker }) {
@@ -30,17 +32,18 @@ export function SurvivorPickerDialog({ open, accusations, setSurvivorPicker }) {
 			return Object.fromEntries(survivorList.map((s) => [s.id, s]));
 		},
 	});
+	const setNotification = useContext(NotificationContext);
 
 	const chooseAccuser = async (accuser_id: number | null) => {
 		setSurvivorPicker(false);
 		if (!accuser_id) return;
-		await fetch(`${API_BASE_URL}/survivors/${survivorId}/infection`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ accuser_id }),
-		});
+		const result = await easyPost(
+			`${API_BASE_URL}/survivors/${survivorId}/infection`,
+			JSON.stringify({ accuser_id }),
+			"Failed to accuse survivor of being infected",
+			"Survivor flagged as infected",
+		);
+		setNotification(result);
 		queryClient.invalidateQueries({
 			queryKey: ["survivors", survivorId, "infection", "accusers"],
 		});
