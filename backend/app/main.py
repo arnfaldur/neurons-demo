@@ -1,9 +1,13 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from .routing import survivors, infection, items
 from .database import initialize_db
+from .env import DATABASE_URL
+
+os.environ.update({"DATABASE_URL": DATABASE_URL})
 
 
 # Initialize database on startup
