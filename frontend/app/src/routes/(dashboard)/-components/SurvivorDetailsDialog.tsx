@@ -33,7 +33,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 			return await response.json();
 		},
 	});
-	const { data: accusations, status: accusationsStatus } = useQuery({
+	const { data: accusations, status: accusationsStatus } = useQuery<Set<number>>({
 		queryKey: ["survivors", survivorId, "infection", "accusers"],
 		queryFn: async () => {
 			const response = await fetch(
@@ -54,7 +54,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 	};
 	return (
 		<>
-			<Dialog open={true} maxWidth="sm" fullWidth>
+			<Dialog open={true} maxWidth="sm">
 				<DialogTitle>
 					{isFetching ? "Loading survivor" : "Survivor Details"}
 				</DialogTitle>

@@ -21,7 +21,15 @@ import { useContext } from "react";
 import { NotificationContext } from "../../-Notifications";
 
 // This component lets you pick a survivor to accuse another of being infected.
-export function SurvivorPickerDialog({ open, accusations, setSurvivorPicker }) {
+export function SurvivorPickerDialog({
+	open,
+	accusations,
+	setSurvivorPicker,
+}: {
+	open: boolean;
+	accusations: Set<number>;
+	setSurvivorPicker: (v: boolean) => void;
+}) {
 	const { survivorId } = useParams({ strict: false });
 	const queryClient = useQueryClient();
 	const { data: survivors } = useQuery({
@@ -29,7 +37,7 @@ export function SurvivorPickerDialog({ open, accusations, setSurvivorPicker }) {
 		queryFn: async () => {
 			const response = await fetch(`${API_BASE_URL}/survivors`);
 			const survivorList = await response.json();
-			return Object.fromEntries(survivorList.map((s) => [s.id, s]));
+			return Object.fromEntries(survivorList.map((s: Survivor) => [s.id, s]));
 		},
 	});
 	const setNotification = useContext(NotificationContext);
