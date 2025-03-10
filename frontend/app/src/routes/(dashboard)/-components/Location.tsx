@@ -3,13 +3,13 @@ import { Grid2, Typography, Divider, Box, Button, Input } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { API_BASE_URL, easyPost } from "../../../../utils";
-import type { Survivor } from "../../../../types";
-import { LocationSection } from "../../../register-survivor/-components/LocationSection";
+import { API_BASE_URL, easyPost } from "../../../utils";
+import type { Survivor } from "../../../types";
+import { LocationSection } from "../../register-survivor/-components/LocationSection";
 import {
 	NotificationContext,
 	NotificationState,
-} from "../../../-Notifications";
+} from "../../-Notifications";
 
 async function submitLocationChange(
 	_: NotificationState,

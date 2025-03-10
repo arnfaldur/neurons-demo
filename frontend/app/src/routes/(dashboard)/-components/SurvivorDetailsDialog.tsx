@@ -11,11 +11,11 @@ import {
 } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { API_BASE_URL } from "../../../../utils";
-import type { Survivor } from "../../../../types";
+import { API_BASE_URL } from "../../../utils";
+import type { Survivor } from "../../../types";
 import { SurvivorPickerDialog } from "./SurvivorPickerDialog";
 import { Location } from "./Location";
-import { InventoryBig } from "../../../../components/inventory";
+import { InventoryBig } from "../../../components/inventory";
 
 // This component shows details about a survivor
 export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
@@ -53,50 +53,52 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 		queryClient.invalidateQueries({ queryKey: ["survivors", survivorId] });
 	};
 	return (
-		<Dialog open={true} maxWidth="sm" fullWidth>
-			<DialogTitle>
-				{isFetching ? "Loading survivor" : "Survivor Details"}
-			</DialogTitle>
-			<DialogContent>
-				{isFetched && (
+		<>
+			<Dialog open={true} maxWidth="sm" fullWidth>
+				<DialogTitle>
+					{isFetching ? "Loading survivor" : "Survivor Details"}
+				</DialogTitle>
+				<DialogContent>
+					{isFetched && (
+						<Grid2 container spacing={2}>
+							<Bio survivor={survivor} />
+							<Location survivor={survivor} />
+							<InventoryBig survivor={survivor} />
+						</Grid2>
+					)}
+				</DialogContent>
+				<DialogActions>
 					<Grid2 container spacing={2}>
-						<Bio survivor={survivor} />
-						<Location survivor={survivor} />
-						<InventoryBig survivor={survivor} />
-					</Grid2>
-				)}
-			</DialogContent>
-			<DialogActions>
-				<Grid2 container spacing={2}>
-					<Grid2 size={4}>
-						<Button
-							onClick={() => setSurvivorPicker(true)}
-							variant="contained"
-							color="secondary"
-						>
-							Accuse
-						</Button>
-					</Grid2>
-					<Grid2 size={4}>
-						<Link to="/survivors">
+						<Grid2 size={4}>
 							<Button
-								onClick={() => deleteSurvivor(survivorId)}
+								onClick={() => setSurvivorPicker(true)}
 								variant="contained"
-								color="error"
+								color="secondary"
 							>
-								Delete
+								Accuse
 							</Button>
-						</Link>
+						</Grid2>
+						<Grid2 size={4}>
+							<Link to="/survivors">
+								<Button
+									onClick={() => deleteSurvivor(survivorId)}
+									variant="contained"
+									color="error"
+								>
+									Delete
+								</Button>
+							</Link>
+						</Grid2>
+						<Grid2 size={4}>
+							<Link to="/survivors">
+								<Button variant="contained" color="primary">
+									Close
+								</Button>
+							</Link>
+						</Grid2>
 					</Grid2>
-					<Grid2 size={4}>
-						<Link to="/survivors">
-							<Button variant="contained" color="primary">
-								Close
-							</Button>
-						</Link>
-					</Grid2>
-				</Grid2>
-			</DialogActions>
+				</DialogActions>
+			</Dialog>
 			{accusationsStatus === "success" && (
 				<SurvivorPickerDialog
 					accusations={accusations}
@@ -104,7 +106,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 					setSurvivorPicker={setSurvivorPicker}
 				/>
 			)}
-		</Dialog>
+		</>
 	);
 }
 

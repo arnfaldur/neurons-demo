@@ -15,10 +15,10 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 
-import { API_BASE_URL, easyPost } from "../../../../utils";
-import type { Survivor } from "../../../../types";
+import { API_BASE_URL, easyPost } from "../../../utils";
+import type { Survivor } from "../../../types";
 import { useContext } from "react";
-import { NotificationContext } from "../../../-Notifications";
+import { NotificationContext } from "../../-Notifications";
 
 // This component lets you pick a survivor to accuse another of being infected.
 export function SurvivorPickerDialog({ open, accusations, setSurvivorPicker }) {
@@ -105,7 +105,7 @@ function AccusersTable({
 								hover
 								key={survivor.id}
 								onClick={() => chooseAccuser(survivor.id)}
-								sx={{ input: { cursor: "pointer" } }}
+								sx={{ cursor: "pointer" }}
 							>
 								<TableCell>{survivor.id}</TableCell>
 								<TableCell>{survivor.name}</TableCell>

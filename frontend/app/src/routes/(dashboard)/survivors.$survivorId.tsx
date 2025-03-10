@@ -3,7 +3,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { SurvivorDetailsDialog } from "./-components/SurvivorDetailsDialog";
 
 export const Route = createFileRoute(
-	"/(dashboard)/survivors/survivor/$survivorId",
+	"/(dashboard)/survivors/$survivorId",
 )({
 	component: RouteComponent,
 });
