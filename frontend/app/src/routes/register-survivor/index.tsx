@@ -76,7 +76,7 @@ function RegisterSurvivor() {
 			queryClient.invalidateQueries({
 				queryKey: ["survivors"],
 			});
-			router.navigate({ replace: true, href: "/dashboard" });
+			router.navigate({ replace: true, href: "/survivors" });
 		}
 	}, [state]);
 

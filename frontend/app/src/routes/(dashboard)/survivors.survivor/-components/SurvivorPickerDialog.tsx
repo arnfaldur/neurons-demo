@@ -102,9 +102,10 @@ function AccusersTable({
 					<TableBody>
 						{potentialAccusers.map((survivor) => (
 							<TableRow
+								hover
 								key={survivor.id}
 								onClick={() => chooseAccuser(survivor.id)}
-								hover
+								sx={{ input: { cursor: "pointer" } }}
 							>
 								<TableCell>{survivor.id}</TableCell>
 								<TableCell>{survivor.name}</TableCell>

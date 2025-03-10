@@ -6,6 +6,6 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	navigate({ href: "/dashboard" });
+	navigate({ href: "/survivors" });
 	return null;
 }

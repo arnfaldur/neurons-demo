@@ -67,7 +67,7 @@ const TBody = ({ survivors }: { survivors: Survivor[] }) => (
 			<TableRow
 				key={survivor.id}
 				component={Link}
-				to={`/dashboard/survivor/${survivor.id}`}
+				to={`/survivors/survivor/${survivor.id}`}
 				hover
 			>
 				<TableCell component="div">{survivor.id}</TableCell>

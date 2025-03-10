@@ -78,7 +78,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 						</Button>
 					</Grid2>
 					<Grid2 size={4}>
-						<Link to="/dashboard">
+						<Link to="/survivors">
 							<Button
 								onClick={() => deleteSurvivor(survivorId)}
 								variant="contained"
@@ -89,7 +89,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 						</Link>
 					</Grid2>
 					<Grid2 size={4}>
-						<Link to="/dashboard">
+						<Link to="/survivors">
 							<Button variant="contained" color="primary">
 								Close
 							</Button>

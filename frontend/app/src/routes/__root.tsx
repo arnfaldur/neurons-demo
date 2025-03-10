@@ -45,9 +45,9 @@ function RootComponent() {
 							<Button
 								color="inherit"
 								component={Link}
-								to="/dashboard"
+								to="/survivors"
 							>
-								Dashboard
+								Survivors
 							</Button>
 							<Button
 								color="inherit"
