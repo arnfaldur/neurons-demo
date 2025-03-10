@@ -113,15 +113,15 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 
 const Bio = ({ survivor }: { survivor: Survivor }) => (
 	<>
-		<Grid2 size={{ xs: 12, sm: 3 }}>
+		<Grid2 size={{ xs: 12, sm: 5 }}>
 			<Typography variant="subtitle2">Name</Typography>
 			{survivor.name}
 		</Grid2>
-		<Grid2 size={{ xs: 12, sm: 3 }}>
+		<Grid2 size={{ xs: 5.5, sm: 3 }}>
 			<Typography variant="subtitle2">Age</Typography>
 			{survivor.age}
 		</Grid2>
-		<Grid2 size={{ xs: 12, sm: 3 }}>
+		<Grid2 size={{ xs: 6.5, sm: 4 }}>
 			<Typography variant="subtitle2">Gender</Typography>
 			{survivor.gender}
 		</Grid2>

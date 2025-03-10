@@ -55,15 +55,15 @@ export function PersonalInfoSection() {
 				<Typography variant="h6">Personal Information</Typography>
 			</Grid2>
 
-			<Grid2 size={{ xs: 12, sm: 3 }}>
+			<Grid2 size={{ xs: 12, sm: 5 }}>
 				<NameField />
 			</Grid2>
 
-			<Grid2 size={{ xs: 12, sm: 3 }}>
+			<Grid2 size={{ xs: 5.5, sm: 3 }}>
 				<AgeField />
 			</Grid2>
 
-			<Grid2 size={{ xs: 12, sm: 3 }}>
+			<Grid2 size={{ xs: 6.5, sm: 4 }}>
 				<GenderField />
 			</Grid2>
 		</>
