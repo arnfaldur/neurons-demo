@@ -16,8 +16,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { API_BASE_URL } from "../../../utils";
-import { Survivor } from "../-types";
+import { API_BASE_URL } from "../../../../utils";
+import { Survivor } from "../../-types";
 import { SurvivorPickerDialog } from "./SurvivorPickerDialog";
 
 // This component shows details about a survivor
@@ -28,7 +28,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 		isFetching,
 		isFetched,
 	} = useQuery({
-		queryKey: ["survivor", survivorId],
+		queryKey: ["survivors", survivorId],
 		queryFn: async () => {
 			const response = await fetch(
 				`${API_BASE_URL}/survivors/${survivorId}`,
@@ -37,7 +37,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 		},
 	});
 	const { data: accusations, status: accusationsStatus } = useQuery({
-		queryKey: ["survivor", survivorId, "infection", "accusers"],
+		queryKey: ["survivors", survivorId, "infection", "accusers"],
 		queryFn: async () => {
 			const response = await fetch(
 				`${API_BASE_URL}/survivors/${survivorId}/infection/accusers`,
@@ -53,7 +53,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 			method: "DELETE",
 		});
 		queryClient.invalidateQueries({ queryKey: ["survivors"] });
-		queryClient.invalidateQueries({ queryKey: ["survivor", survivorId] });
+		queryClient.invalidateQueries({ queryKey: ["survivors", survivorId] });
 	};
 	return (
 		<Dialog open={true} maxWidth="sm" fullWidth>
