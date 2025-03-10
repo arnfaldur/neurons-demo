@@ -7,15 +7,47 @@ import {
 	TableHead,
 	TableRow,
 	Typography,
+	Chip,
+	Tooltip,
+	Box,
 } from "@mui/material";
-import { Survivor } from "../-types";
 import { Link } from "@tanstack/react-router";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { cyan } from "@mui/material/colors";
+
+import type { Survivor } from "../../../types";
 
 // All the table components had to be turned into a div so that the rows can be Link components
 // It's an ugly workaround, but the alternative didn't seem better
 // It could be implemented in javascript but then we loose <a> tag features.
 // I don't know if there are any features enabled by proper table element usage,
 // that we are loosing by doing this.
+
+// Component to display location coordinates nicely
+function LocationDisplay({ coordinates }: { coordinates: [number, number] }) {
+	// Format coordinates to 4 decimal places max
+	const formatCoord = (num: number) => {
+		return parseFloat(num.toFixed(4)).toString();
+	};
+
+	const [lat, lng] = coordinates;
+
+	return (
+		<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+			<LocationOnIcon fontSize="small" color="action" />
+			<Tooltip title={`Latitude: ${lat}, Longitude: ${lng}`}>
+				<Chip
+					size="small"
+					label={`${formatCoord(lat)}, ${formatCoord(lng)}`}
+					sx={{
+						bgcolor: cyan[50],
+						"& .MuiChip-label": { fontSize: "0.8rem" },
+					}}
+				/>
+			</Tooltip>
+		</Box>
+	);
+}
 
 const THead = () => (
 	<TableHead component="div">
@@ -43,7 +75,7 @@ const TBody = ({ survivors }: { survivors: Survivor[] }) => (
 				<TableCell component="div">{survivor.age}</TableCell>
 				<TableCell component="div">{survivor.gender}</TableCell>
 				<TableCell component="div">
-					{`X: ${survivor.last_location[0]}, Y: ${survivor.last_location[1]}`}
+					<LocationDisplay coordinates={survivor.last_location} />
 				</TableCell>
 			</TableRow>
 		))}
