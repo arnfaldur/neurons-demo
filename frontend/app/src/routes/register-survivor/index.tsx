@@ -1,5 +1,6 @@
 import { useActionState, useContext, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import {
 	Box,
 	Button,
@@ -12,7 +13,6 @@ import {
 import { PersonalInfoSection } from "./-components/PersonalInfoSection";
 import { LocationSection } from "./-components/LocationSection";
 import { InventorySection } from "./-components/InventorySection";
-import { Notifications } from "./-components/Notifications";
 import { API_BASE_URL } from "../../utils";
 import { useRouter } from "@tanstack/react-router";
 import { NotificationContext, NotificationState } from "../-Notifications";
@@ -30,7 +30,7 @@ const inventoryItems: InventoryItem[] = [
 ];
 
 async function submit(
-	_: ActionState,
+	_: NotificationState,
 	formData: FormData,
 ): Promise<NotificationState> {
 	// create last_location object from formData
@@ -79,12 +79,20 @@ async function submit(
 
 function RegisterSurvivor() {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const setNotification = useContext(NotificationContext);
-	const [state, formAction] = useActionState(submit);
+	const [state, formAction] = useActionState(submit, null);
 
 	useEffect(() => {
 		setNotification(state);
 		if (state && "success" in state) {
+			// It would be better to make this more fine grained
+			// This approach likely doesn't work well with the getAll
+			// design of the /survivors endpoint. But it's there to avoid
+			// the N+1 problem, so there are tradeoffs.
+			queryClient.invalidateQueries({
+				queryKey: ["survivors"],
+			});
 			router.navigate({ replace: true, href: "/dashboard" });
 		}
 	}, [state]);
@@ -103,6 +111,12 @@ function RegisterSurvivor() {
 							<PersonalInfoSection />
 
 							{/* Location */}
+							<Grid2 size={{ xs: 12 }}>
+								<Typography variant="h6">
+									Last Known Location
+								</Typography>
+							</Grid2>
+
 							<LocationSection />
 
 							{/* Inventory */}

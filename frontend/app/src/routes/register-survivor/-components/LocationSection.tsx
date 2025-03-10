@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Grid2, TextField, Typography } from "@mui/material";
+import { Grid2, TextField } from "@mui/material";
 
 // Coordinate field hook (latitude/longitude)
 function useCoordinateField(initialValue: number = 0) {
@@ -36,17 +36,17 @@ function useCoordinateField(initialValue: number = 0) {
 	};
 }
 
-export function LocationSection() {
-	const latitude = useCoordinateField();
-	const longitude = useCoordinateField();
+export function LocationSection({
+	last_location,
+}: {
+	last_location?: [number, number];
+}) {
+	const latitude = useCoordinateField(last_location?.[0] ?? 0);
+	const longitude = useCoordinateField(last_location?.[1] ?? 0);
 
 	return (
 		<>
-			<Grid2 size={{ xs: 12 }}>
-				<Typography variant="h6">Last Known Location</Typography>
-			</Grid2>
-
-			<Grid2 size={{ xs: 12, sm: 6 }}>
+			<Grid2 size={{ xs: 6, sm: 4 }}>
 				<TextField
 					fullWidth
 					label="Latitude"
@@ -60,7 +60,7 @@ export function LocationSection() {
 				/>
 			</Grid2>
 
-			<Grid2 size={{ xs: 12, sm: 6 }}>
+			<Grid2 size={{ xs: 6, sm: 4 }}>
 				<TextField
 					fullWidth
 					label="Longitude"
