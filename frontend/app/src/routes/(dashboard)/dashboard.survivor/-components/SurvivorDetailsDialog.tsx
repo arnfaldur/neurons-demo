@@ -68,27 +68,33 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 			</DialogContent>
 			<DialogActions>
 				<Grid2 container spacing={2}>
-					<Button
-						onClick={() => setSurvivorPicker(true)}
-						variant="contained"
-						color="secondary"
-					>
-						Accuse
-					</Button>
-					<Link to="/dashboard">
+					<Grid2 size={4}>
 						<Button
-							onClick={() => deleteSurvivor(survivorId)}
+							onClick={() => setSurvivorPicker(true)}
 							variant="contained"
-							color="error"
+							color="secondary"
 						>
-							Delete
+							Accuse
 						</Button>
-					</Link>
-					<Link to="/dashboard">
-						<Button variant="contained" color="primary">
-							Close
-						</Button>
-					</Link>
+					</Grid2>
+					<Grid2 size={4}>
+						<Link to="/dashboard">
+							<Button
+								onClick={() => deleteSurvivor(survivorId)}
+								variant="contained"
+								color="error"
+							>
+								Delete
+							</Button>
+						</Link>
+					</Grid2>
+					<Grid2 size={4}>
+						<Link to="/dashboard">
+							<Button variant="contained" color="primary">
+								Close
+							</Button>
+						</Link>
+					</Grid2>
 				</Grid2>
 			</DialogActions>
 			{accusationsStatus === "success" && (
