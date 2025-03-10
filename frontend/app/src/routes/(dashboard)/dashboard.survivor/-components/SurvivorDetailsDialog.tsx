@@ -17,7 +17,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { API_BASE_URL } from "../../../../utils";
+import { API_BASE_URL, easyPost } from "../../../../utils";
 import type { Survivor } from "../../../../types";
 import { SurvivorPickerDialog } from "./SurvivorPickerDialog";
 import { LocationSection } from "../../../register-survivor/-components/LocationSection";
@@ -133,36 +133,18 @@ async function submit(
 	formData: FormData,
 ): Promise<NotificationState> {
 	// create the last_location object from formData
-	const last_location = [formData.get("latitude"), formData.get("longitude")].map(Number);
+	const last_location = [
+		formData.get("latitude"),
+		formData.get("longitude"),
+	].map(Number);
 	const survivorId = formData.get("id");
 
-	try {
-		const response = await fetch(
-			`${API_BASE_URL}/survivors/${survivorId}/location`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(last_location),
-			},
-		);
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.detail || "Failed to update location");
-		}
-
-		return {
-			success: "Survivor location updated successfully!",
-		};
-	} catch (error) {
-		return {
-			error:
-				error instanceof Error
-					? error.message
-					: "Unknown error occurred",
-		};
-	}
+	return await easyPost(
+		`${API_BASE_URL}/survivors/${survivorId}/location`,
+		JSON.stringify(last_location),
+		"Failed to update location",
+		"Survivor location updated successfully!",
+	);
 }
 
 const Location = ({ survivor }: { survivor: Survivor }) => {
