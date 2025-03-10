@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { SurvivorsTable } from "./-components/SurvivorsTable";
 import { API_BASE_URL } from "../../utils";
+import { Survivor } from "../../types";
 
 export const Route = createFileRoute("/(dashboard)/survivors")({
 	component: Survivors,
@@ -14,7 +15,7 @@ function Survivors() {
 		queryFn: async () => {
 			const response = await fetch(`${API_BASE_URL}/survivors`);
 			const survivorList = await response.json();
-			return Object.fromEntries(survivorList.map((s) => [s.id, s]));
+			return Object.fromEntries(survivorList.map((s: Survivor) => [s.id, s]));
 		},
 	});
 

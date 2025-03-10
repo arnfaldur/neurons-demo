@@ -12,7 +12,7 @@ function RouteComponent() {
 	const { survivorId } = Route.useParams();
 	return (
 		<>
-			<SurvivorDetailsDialog survivorId={survivorId} />
+			<SurvivorDetailsDialog survivorId={Number(survivorId)} />
 			<Outlet />
 		</>
 	);

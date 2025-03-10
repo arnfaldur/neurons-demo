@@ -1,6 +1,11 @@
 export const API_BASE_URL = "http://localhost:8000";
 
-export async function easyPost(url, body, error, success) {
+export async function easyPost(
+	url: string,
+	body: string,
+	error: string,
+	success: string,
+) {
 	try {
 		const response = await fetch(url, {
 			method: "POST",

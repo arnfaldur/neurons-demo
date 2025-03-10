@@ -20,6 +20,7 @@ import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { inventoryPointValue } from "./-utils";
 import { green } from "@mui/material/colors";
 import { NotificationContext } from "../-Notifications";
+import { Survivor } from "../../types";
 
 export const Route = createFileRoute("/trading/")({
 	component: TradingRoute,
@@ -39,7 +40,7 @@ function TradingRoute() {
 		queryFn: async () => {
 			const response = await fetch(`${API_BASE_URL}/survivors`);
 			const survivorList = await response.json();
-			return Object.fromEntries(survivorList.map((s) => [s.id, s]));
+			return Object.fromEntries(survivorList.map((s: Survivor) => [s.id, s]));
 		},
 	});
 	const setNotification = useContext(NotificationContext);
@@ -58,14 +59,14 @@ function TradingRoute() {
 	);
 
 	// Handle trade changes
-	const handleTradeChangeA = (resourceType, value) => {
+	const handleTradeChangeA = (resourceType: string, value: number) => {
 		setTradeBalanceA((prev) => ({
 			...prev,
 			[resourceType]: value,
 		}));
 	};
 
-	const handleTradeChangeB = (resourceType, value) => {
+	const handleTradeChangeB = (resourceType: string, value: number) => {
 		setTradeBalanceB((prev) => ({
 			...prev,
 			[resourceType]: value,

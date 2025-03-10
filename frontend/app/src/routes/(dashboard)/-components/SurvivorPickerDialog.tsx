@@ -95,7 +95,7 @@ function AccusersTable({
 	chooseAccuser,
 }: {
 	potentialAccusers: Survivor[];
-	chooseAccuser: any;
+	chooseAccuser: (v: number | null) => Promise<void>;
 }) {
 	return (
 		<>

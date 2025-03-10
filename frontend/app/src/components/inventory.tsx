@@ -8,7 +8,7 @@ import {
 	Box,
 	Paper,
 } from "@mui/material";
-import { red, green, blue, amber, lightGreen } from "@mui/material/colors";
+import { red, green, blue, amber } from "@mui/material/colors";
 import LocalDrinkIcon from "@mui/icons-material/LocalDrink";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";

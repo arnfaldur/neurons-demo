@@ -3,22 +3,24 @@ import {
 	type Dispatch,
 	type SetStateAction,
 	useState,
-useEffect
+	useEffect,
+	ReactNode,
 } from "react";
 import { Snackbar, Alert } from "@mui/material";
 
 export type NotificationState = null | { success: string } | { error: string };
 
-export const NotificationContext =
-	createContext<Dispatch<SetStateAction<NotificationState>>>(null);
+export const NotificationContext = createContext<
+	Dispatch<SetStateAction<NotificationState>>
+>(null!);
 
-export function NotificationProvider({ children }) {
+export function NotificationProvider({ children }: { children: ReactNode }) {
 	const [notification, setNotification] = useState<NotificationState>(null);
 	return (
 		<NotificationContext.Provider value={setNotification}>
 			{children}
 
-            <Notifications state={notification} />
+			<Notifications state={notification} />
 		</NotificationContext.Provider>
 	);
 }
@@ -54,7 +56,7 @@ function Notifications({ state }: { state: NotificationState }) {
 				onClose={onSuccessClose}
 			>
 				<Alert onClose={onSuccessClose} severity="success">
-                    {success}
+					{success}
 				</Alert>
 			</Snackbar>
 
