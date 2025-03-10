@@ -26,6 +26,7 @@ class Survivor(BaseModel):
             inventory=inventory,
         )
 
+
 @router.get("", response_model=list[Survivor])
 async def get_survivors(cur: Cursor = Depends(get_db)):
     # This should be paginated using URL props
@@ -77,6 +78,14 @@ async def survivors_update(
             survivor.last_location,
             survivor_id,
         ),
+    )
+
+
+@router.delete("/{survivor_id}")
+async def survivors_delete(survivor_id: int, cur: Cursor = Depends(get_db)):
+    cur.execute(
+        "DELETE FROM survivors WHERE id = %s",
+        (survivor_id,),
     )
 
 

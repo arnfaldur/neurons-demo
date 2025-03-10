@@ -12,27 +12,39 @@ import {
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "../../../utils";
 import { Survivor } from "../-types";
 import { Link } from "@tanstack/react-router";
 
-export function SurvivorDetailsDialog({
-	survivorId,
-}: {
-	survivorId: number;
-}) {
-	const {data: survivor, isFetching, isFetched } = useQuery({
+export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
+	const queryClient = useQueryClient();
+	const {
+		data: survivor,
+		isFetching,
+		isFetched,
+	} = useQuery({
 		queryKey: ["survivor", survivorId],
 		queryFn: async () => {
-			const response = await fetch(`${API_BASE_URL}/survivors/${survivorId}`);
+			const response = await fetch(
+				`${API_BASE_URL}/survivors/${survivorId}`,
+			);
 			return await response.json();
 		},
 	});
+	const deleteSurvivor = async (survivorId: number) => {
+		await fetch(`${API_BASE_URL}/survivors/${survivorId}`, {
+			method: "DELETE",
+		});
+		queryClient.invalidateQueries({ queryKey: ["survivors"] });
+		queryClient.invalidateQueries({ queryKey: ["survivor", survivorId] });
+	};
 	return (
 		<Dialog open={true} maxWidth="sm" fullWidth>
-			<DialogTitle>{isFetching ? "Loading survivor" : "Survivor Details"}</DialogTitle>
+			<DialogTitle>
+				{isFetching ? "Loading survivor" : "Survivor Details"}
+			</DialogTitle>
 			<DialogContent>
 				{isFetched && (
 					<Grid2 container spacing={2}>
@@ -43,9 +55,20 @@ export function SurvivorDetailsDialog({
 				)}
 			</DialogContent>
 			<DialogActions>
-				<Button variant="contained" color="primary">
-					<Link to="/dashboard">Close</Link>
-				</Button>
+				<Link to="/dashboard">
+					<Button
+						onClick={() => deleteSurvivor(survivorId)}
+						variant="contained"
+						color="error"
+					>
+						Delete
+					</Button>
+				</Link>
+				<Link to="/dashboard">
+					<Button variant="contained" color="primary">
+						Close
+					</Button>
+				</Link>
 			</DialogActions>
 		</Dialog>
 	);
