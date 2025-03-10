@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "@tanstack/react-router";
 import {
 	Dialog,
@@ -8,7 +8,11 @@ import {
 	Grid2,
 	Typography,
 	Button,
+	CircularProgress,
+	Alert,
+	Box,
 } from "@mui/material";
+import { NotificationContext } from "../../-Notifications";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "../../../utils";
@@ -20,27 +24,56 @@ import { InventoryBig } from "../../../components/inventory";
 // This component shows details about a survivor
 export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 	const queryClient = useQueryClient();
+	const setNotification = useContext(NotificationContext);
+	
 	const {
 		data: survivor,
 		isFetching,
 		isFetched,
+		error: survivorError,
+		status: survivorStatus,
+		refetch: refetchSurvivor
 	} = useQuery({
 		queryKey: ["survivors", survivorId],
 		queryFn: async () => {
-			const response = await fetch(
-				`${API_BASE_URL}/survivors/${survivorId}`,
-			);
-			return await response.json();
+			try {
+				const response = await fetch(
+					`${API_BASE_URL}/survivors/${survivorId}`,
+				);
+				if (!response.ok) {
+					throw new Error("Failed to fetch survivor data");
+				}
+				return await response.json();
+			} catch (error) {
+				// Notify user of connection error
+				setNotification({ error: "Failed to load survivor data. Please check your connection." });
+				throw error;
+			}
 		},
 	});
-	const { data: accusations, status: accusationsStatus } = useQuery<Set<number>>({
+	
+	const { 
+		data: accusations, 
+		status: accusationsStatus, 
+		error: accusationsError,
+		refetch: refetchAccusations
+	} = useQuery<Set<number>>({
 		queryKey: ["survivors", survivorId, "infection", "accusers"],
 		queryFn: async () => {
-			const response = await fetch(
-				`${API_BASE_URL}/survivors/${survivorId}/infection/accusers`,
-			);
-			// make set out of existing accusations, and add self to avoid accusing oneself.
-			return new Set([...(await response.json()), Number(survivorId)]);
+			try {
+				const response = await fetch(
+					`${API_BASE_URL}/survivors/${survivorId}/infection/accusers`,
+				);
+				if (!response.ok) {
+					throw new Error("Failed to fetch accusations data");
+				}
+				// make set out of existing accusations, and add self to avoid accusing oneself.
+				return new Set([...(await response.json()), Number(survivorId)]);
+			} catch (error) {
+				// Notify user of connection error
+				setNotification({ error: "Failed to load accusations data. Please check your connection." });
+				throw error;
+			}
 		},
 	});
 	const [survivorPicker, setSurvivorPicker] = useState(false);
@@ -56,15 +89,49 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 		<>
 			<Dialog open={true} maxWidth="sm">
 				<DialogTitle>
-					{isFetching ? "Loading survivor" : "Survivor Details"}
+					{survivorStatus === "pending" ? "Loading survivor..." : "Survivor Details"}
 				</DialogTitle>
 				<DialogContent>
-					{isFetched && (
+					{survivorStatus === "pending" && (
+						<Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+							<CircularProgress />
+						</Box>
+					)}
+
+					{survivorStatus === "error" && (
+						<Alert 
+							severity="error" 
+							sx={{ my: 2 }}
+							action={
+								<Button color="inherit" size="small" onClick={() => refetchSurvivor()}>
+									Retry
+								</Button>
+							}
+						>
+							Failed to load survivor data. Please check your connection.
+						</Alert>
+					)}
+
+					{survivorStatus === "success" && (
 						<Grid2 container spacing={2}>
 							<Bio survivor={survivor} />
 							<Location survivor={survivor} />
 							<InventoryBig survivor={survivor} />
 						</Grid2>
+					)}
+					
+					{accusationsStatus === "error" && (
+						<Alert 
+							severity="warning" 
+							sx={{ mt: 2 }}
+							action={
+								<Button color="inherit" size="small" onClick={() => refetchAccusations()}>
+									Retry
+								</Button>
+							}
+						>
+							Failed to load accusations data.
+						</Alert>
 					)}
 				</DialogContent>
 				<DialogActions>
@@ -74,6 +141,7 @@ export function SurvivorDetailsDialog({ survivorId }: { survivorId: number }) {
 								onClick={() => setSurvivorPicker(true)}
 								variant="contained"
 								color="secondary"
+								disabled={survivorStatus !== "success"}
 							>
 								Accuse
 							</Button>

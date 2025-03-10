@@ -14,6 +14,7 @@ import {
 	Typography,
 	Box,
 	Stack,
+	CircularProgress,
 } from "@mui/material";
 import { useContext, useMemo, useState } from "react";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
@@ -40,7 +41,9 @@ function TradingRoute() {
 		queryFn: async () => {
 			const response = await fetch(`${API_BASE_URL}/survivors`);
 			const survivorList = await response.json();
-			return Object.fromEntries(survivorList.map((s: Survivor) => [s.id, s]));
+			return Object.fromEntries(
+				survivorList.map((s: Survivor) => [s.id, s]),
+			);
 		},
 	});
 	const setNotification = useContext(NotificationContext);
@@ -82,7 +85,42 @@ function TradingRoute() {
 		);
 	}, [tradeBalanceA, tradeBalanceB]);
 
-	if (survivorsStatus !== "success") return null;
+	if (survivorsStatus === "pending") {
+		return (
+			<Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+				<CircularProgress />
+			</Box>
+		);
+	}
+
+	if (survivorsStatus === "error") {
+		return (
+			<Box
+				sx={{
+					textAlign: "center",
+					my: 4,
+					p: 3,
+					border: "1px solid #f44336",
+					borderRadius: 1,
+				}}
+			>
+				<Typography color="error" variant="h6" gutterBottom>
+					Connection Error
+				</Typography>
+				<Typography>
+					Could not load survivors data.
+				</Typography>
+				<Button
+					variant="contained"
+					color="primary"
+					sx={{ mt: 2 }}
+					onClick={() => window.location.reload()}
+				>
+					Retry
+				</Button>
+			</Box>
+		);
+	}
 
 	const performTrade = async () => {
 		const offer = {
@@ -119,20 +157,24 @@ function TradingRoute() {
 
 			<Grid2 container spacing={{ xs: 2, sm: 2, md: 3 }}>
 				<Grid2 size={{ xs: 12, sm: 6 }}>
-					<TradersTable
-						survivors={Object.values(survivors)}
-						selected={selectedA}
-						select={setSelectedA}
-						forbidden={selectedB}
-					/>
+					{survivors && (
+						<TradersTable
+							survivors={survivors}
+							selected={selectedA}
+							select={setSelectedA}
+							forbidden={selectedB}
+						/>
+					)}
 				</Grid2>
 				<Grid2 size={{ xs: 12, sm: 6 }}>
-					<TradersTable
-						survivors={Object.values(survivors)}
-						selected={selectedB}
-						select={setSelectedB}
-						forbidden={selectedA}
-					/>
+					{survivors && (
+						<TradersTable
+							survivors={survivors}
+							selected={selectedB}
+							select={setSelectedB}
+							forbidden={selectedA}
+						/>
+					)}
 				</Grid2>
 			</Grid2>
 			{survivorA && survivorB && (

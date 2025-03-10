@@ -19,7 +19,7 @@ export function TradersTable({
 	selected,
 	forbidden,
 }: {
-	survivors: Survivor[];
+	survivors: { [k: string]: Survivor };
 	select: (s: number | null) => void;
 	selected: number | null;
 	forbidden: number | null;
