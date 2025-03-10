@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  dev_db:
+    image: docker.io/library/postgres:17
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=neurons
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  dev_backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@dev_db:5432/neurons
+    depends_on:
+      dev_db:
+        condition: service_healthy
+    command: fastapi run --host 0.0.0.0 --port 8000
+
+  dev_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      args:
+        - VITE_API_BASE_URL=http://localhost:8000
+    volumes:
+      - ./frontend/app:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    depends_on:
+      - dev_backend
+
+volumes:
+  postgres_dev_data:
