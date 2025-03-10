@@ -9,28 +9,40 @@ import {
 	Typography,
 } from "@mui/material";
 import { Survivor } from "../-types";
+import { Link } from "@tanstack/react-router";
+
+// All the table components had to be turned into a div so that the rows can be Link components
+// It's an ugly workaround, but the alternative didn't seem better
+// It could be implemented in javascript but then we loose <a> tag features.
+// I don't know if there are any features enabled by proper table element usage,
+// that we are loosing by doing this.
 
 const THead = () => (
-	<TableHead>
-		<TableRow>
-			<TableCell>ID</TableCell>
-			<TableCell>Name</TableCell>
-			<TableCell>Age</TableCell>
-			<TableCell>Gender</TableCell>
-			<TableCell>Location</TableCell>
+	<TableHead component="div">
+		<TableRow component="div">
+			<TableCell component="div">ID</TableCell>
+			<TableCell component="div">Name</TableCell>
+			<TableCell component="div">Age</TableCell>
+			<TableCell component="div">Gender</TableCell>
+			<TableCell component="div">Location</TableCell>
 		</TableRow>
 	</TableHead>
 );
 
 const TBody = ({ survivors }: { survivors: Survivor[] }) => (
-	<TableBody>
+	<TableBody component="div">
 		{survivors.map((survivor) => (
-			<TableRow key={survivor.id}>
-				<TableCell>{survivor.id}</TableCell>
-				<TableCell>{survivor.name}</TableCell>
-				<TableCell>{survivor.age}</TableCell>
-				<TableCell>{survivor.gender}</TableCell>
-				<TableCell>
+			<TableRow
+				key={survivor.id}
+				component={Link}
+				to={`/dashboard/survivor/${survivor.id}`}
+				hover
+			>
+				<TableCell component="div">{survivor.id}</TableCell>
+				<TableCell component="div">{survivor.name}</TableCell>
+				<TableCell component="div">{survivor.age}</TableCell>
+				<TableCell component="div">{survivor.gender}</TableCell>
+				<TableCell component="div">
 					{`X: ${survivor.last_location[0]}, Y: ${survivor.last_location[1]}`}
 				</TableCell>
 			</TableRow>
@@ -46,7 +58,7 @@ export function SurvivorsTable({ survivors }: { survivors: Survivor[] }) {
 			</Typography>
 
 			<TableContainer component={Paper}>
-				<Table>
+				<Table component="div">
 					<THead />
 					<TBody survivors={survivors} />
 				</Table>
