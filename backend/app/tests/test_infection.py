@@ -24,6 +24,10 @@ def test_survivor_infection(test_client: TestClient):
     # two accusations means not infected
     assert not get_response.json()["infected"]
 
+    # we make this accusation twice to cause a conflict
+    post_response = test_client.post(
+        f"/survivors/{survivor_ids[0]}/infection", json={"accuser_id": survivor_ids[2]}
+    )
     # this infection accusation already exists
     post_response = test_client.post(
         f"/survivors/{survivor_ids[0]}/infection", json={"accuser_id": survivor_ids[2]}
@@ -41,3 +45,6 @@ def test_survivor_infection(test_client: TestClient):
     get_response = test_client.get(f"/survivors/{survivor_ids[0]}/infection")
     # three accusations and the survivor is infected
     assert get_response.json()["infected"]
+
+    get_response = test_client.get("/survivors").json()
+    assert len(survivor_ids) - 1 == len(get_response)

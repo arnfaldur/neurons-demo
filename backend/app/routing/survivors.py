@@ -30,13 +30,19 @@ class Survivor(BaseModel):
 @router.get("", response_model=list[Survivor])
 async def get_survivors(cur: Cursor = Depends(get_db)):
     # This should be paginated using URL props
-    cur.execute("SELECT * from survivors")
+    cur.execute(
+        """SELECT s.* FROM survivors s
+        LEFT JOIN survivors_infection_accusations a
+        ON s.id = a.accused_id
+        GROUP BY s.id
+        HAVING count(a.accuser_id) < 3;
+    """)
     return list(map(Survivor.from_dict, cur.fetchall()))
 
 
 @router.get("/{survivor_id}")
 async def get_survivor(survivor_id: int, cur: Cursor = Depends(get_db)):
-    cur.execute("SELECT * from survivors WHERE id = %s", (survivor_id,))
+    cur.execute("SELECT * FROM survivors WHERE id = %s", (survivor_id,))
     survivor = cur.fetchone()
     return Survivor.from_dict(survivor)
 
