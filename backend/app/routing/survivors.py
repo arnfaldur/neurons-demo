@@ -26,9 +26,9 @@ class Survivor(BaseModel):
             inventory=inventory,
         )
 
-
 @router.get("", response_model=list[Survivor])
 async def get_survivors(cur: Cursor = Depends(get_db)):
+    # This should be paginated using URL props
     cur.execute("SELECT * from survivors")
     return list(map(Survivor.from_dict, cur.fetchall()))
 

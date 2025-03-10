@@ -9,6 +9,8 @@ import {
 	Box,
 } from "@mui/material";
 
+import { NotificationProvider } from "./-Notifications";
+
 export const Route = createRootRoute({
 	component: RootComponent,
 });
@@ -24,11 +26,20 @@ function RootComponent() {
 					<Button color="inherit" component={Link} to="/dashboard">
 						Dashboard
 					</Button>
+					<Button
+						color="inherit"
+						component={Link}
+						to="/register-survivor"
+					>
+						Register Survivor
+					</Button>
 				</Toolbar>
 			</AppBar>
 			<Container>
 				<Box sx={{ mt: 4 }}>
-					<Outlet />
+					<NotificationProvider>
+						<Outlet />
+					</NotificationProvider>
 				</Box>
 			</Container>
 			<TanStackRouterDevtools position="bottom-right" />
